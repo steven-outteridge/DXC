@@ -1,44 +1,126 @@
-# This is the default ansible 'hosts' file.
 #
-# It should live in /etc/ansible/hosts
-#
-#   - Comments begin with the '#' character
-#   - Blank lines are ignored
-#   - Groups of hosts are delimited by [header] elements
-#   - You can enter hostnames or ip addresses
-#   - A hostname/ip can be a member of multiple groups
+# ansible inventory for OpenShift Container Platform  3.11.43
+# AgnosticD ansible-config: ocp-ha-lab
 
-# Ex 1: Ungrouped hosts, specify before any group headers.
+[OSEv3:vars]
 
-## green.example.com
-## blue.example.com
-## 192.168.100.1
-## 192.168.100.10
+###########################################################################
+### Ansible Vars
+###########################################################################
+timeout=60
+ansible_user=ec2-user
+ansible_become=yes
 
-# Ex 2: A collection of hosts belonging to the 'webservers' group
+###########################################################################
+### OpenShift Basic Vars
+###########################################################################
 
-## [webservers]
-## alpha.example.org
-## beta.example.org
-## 192.168.1.100
-## 192.168.1.110
+openshift_deployment_type=openshift-enterprise
 
-# If you have multiple hosts following a pattern you can specify
-# them like this:
+openshift_disable_check="disk_availability,memory_availability,docker_image_availability"
 
-## www[001:006].example.com
+# OpenShift Version:
+openshift_image_tag=v3.11.51
+openshift_pkg_version=-3.11.51
+openshift_release=3.11.51
+deployment_subtype=registry 
 
-# Ex 3: A collection of database servers in the 'dbservers' group
+# Node Groups
+openshift_node_groups=
+#openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']},{'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']},{'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true']}]
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']},{'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']},{'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true']}]
 
-## [dbservers]
-## 
-## db01.intranet.mydomain.net
-## db02.intranet.mydomain.net
-## 10.25.1.56
-## 10.25.1.57
 
-# Here's another example of host ranges, this time there are no
-# leading 0s:
 
-## db-[99:101]-node.example.com
+###########################################################################
+### OpenShift Registries Locations
+###########################################################################
+
+#oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
+oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
+
+###########################################################################
+### OpenShift Master Vars
+###########################################################################
+
+openshift_master_api_port=443
+openshift_master_console_port=443
+
+#Default:  openshift_master_cluster_method=native
+openshift_master_cluster_hostname=loadbalancer.df1f.internal
+openshift_master_cluster_public_hostname=loadbalancer.df1f.example.opentlc.com
+openshift_master_default_subdomain=apps.df1f.example.opentlc.com
+openshift_master_overwrite_named_certificates=True
+
+
+###########################################################################
+### OpenShift Authentication Vars
+###########################################################################
+
+# Just HTPASSWD
+ openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+
+# LDAP and HTPASSWD dependencies
+
+openshift_master_htpasswd_file=/root/htpasswd.openshift
+
+###########################################################################
+### OpenShift Router and Registry Vars
+###########################################################################
+
+# default selectors for router and registry services
+# openshift_router_selector='node-role.kubernetes.io/infra=true'
+# openshift_registry_selector='node-role.kubernetes.io/infra=true'
+
+openshift_hosted_router_replicas=2
+
+openshift_hosted_registry_replicas=1
+openshift_hosted_registry_pullthrough=true
+openshift_hosted_registry_acceptschema2=true
+openshift_hosted_registry_enforcequota=true
+
+openshift_hosted_registry_storage_kind=nfs
+openshift_hosted_registry_storage_access_modes= ['ReadWriteMany']
+openshift_hosted_registry_storage_nfs_directory= /srv/nfs
+openshift_hosted_registry_storage_nfs_options= '*(rw,root_squash)'
+openshift_hosted_registry_storage_volume_name= registry
+openshift_hosted_registry_storage_volume_size= 20Gi
+
+[OSEv3:children]
+lb
+masters
+etcd
+nodes
+nfs
+
+[lb]
+loadbalancer.df1f.internal
+
+[masters]
+master1.df1f.internal
+master2.df1f.internal
+master3.df1f.internal
+
+[etcd]
+master1.df1f.internal
+master2.df1f.internal
+master3.df1f.internal
+
+[nodes]
+## These are the masters
+master1.df1f.internal openshift_node_group_name='node-config-master'
+master2.df1f.internal openshift_node_group_name='node-config-master'
+master3.df1f.internal openshift_node_group_name='node-config-master'
+
+## These are infranodes
+infranode1.df1f.internal openshift_node_group_name='node-config-infra'
+infranode2.df1f.internal openshift_node_group_name='node-config-infra'
+
+## These are regular nodes
+node1.df1f.internal openshift_node_group_name='node-config-compute'
+node2.df1f.internal openshift_node_group_name='node-config-compute'
+
+
+[nfs]
+support1.df1f.internal
 
