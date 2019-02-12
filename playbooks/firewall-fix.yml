@@ -1,0 +1,24 @@
+---
+- name: Fiewall rules
+  hosts: OSEv3
+  tasks:
+    - name: write firewall rules
+      shell: |
+        firewall-cmd --permanent --direct --add-rule ipv4  filter INPUT 0 -p tcp --dport 53 -j ACCEPT
+        firewall-cmd --direct --add-rule ipv4 raw PREROUTING 0 -p tcp --dport 53 -j NOTRACK   --permanent
+        firewall-cmd --direct --permanent --add-rule ipv4 raw PREROUTING 0 -p tcp --dport 53 -j NOTRACK   
+        firewall-cmd --permanent --direct --add-rule ipv4 raw PREROUTING 0 -p udp --dport 53 -j NOTRACK
+        firewall-cmd --permanent --direct --add-rule ipv6 raw PREROUTING 0 -p udp --dport 53 -j NOTRACK
+        firewall-cmd --direct --permanent --add-rule ipv6 raw PREROUTING 0 -p tcp --dport 53 -j NOTRACK   
+        firewall-cmd --permanent --direct --add-rule ipv6  filter INPUT 0 -p tcp --dport 53 -j ACCEPT
+    - name: Check the rules with firewalld
+      shell: |
+        firewall-cmd --direct --get-all-rules
+    - name: Check the rule in raw table.
+      shell: |
+         iptables -t raw -nvxL
+    - name: Restart the firewalld & docker service
+      shell: |
+        systemctl restart firewalld
+        systemctl restart docker
+      ignore_errors: yes

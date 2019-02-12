@@ -1,0 +1,12 @@
+- name: pull images onto nodes
+  hosts: [nodes]
+  become: true
+  tasks:
+    - name: pull to local registry
+      when: openshift_node_group_name == 'node-config-compute'
+      docker_image:
+#        name: centos
+#        repository: docker-registry.default.svc:5000/demo-push/centos
+        name: docker-registry.default.svc:5000/demo-push/centos
+        tag: 0.1
+        pull: yes

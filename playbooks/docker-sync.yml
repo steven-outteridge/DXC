@@ -1,0 +1,12 @@
+- name: Fiewall rules
+  hosts: master1.b640.internal
+  serial: 1
+  become: true
+  tasks:
+    - name: sync 
+      synchronize:
+        src: /tmp/busybox.tar
+        dest: /tmp/busybox.tar
+        mode: push
+      delegate_to: master3.b640.internal
+

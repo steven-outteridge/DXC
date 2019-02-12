@@ -1,0 +1,13 @@
+---
+- name: Copy certs
+  hosts: OSEv3
+
+  tasks:
+    - name:  make registry dir
+      file:
+        path: /etc/docker/certs.d/docker-registry.default.svc.cluster.local:5000
+        state: directory
+    - copy:
+        src: /etc/ansible/playbooks/templates/node-client-ca.crt
+        dest: /etc/docker/certs.d/docker-registry.default.svc.cluster.local:5000/node-client-ca.crt
+

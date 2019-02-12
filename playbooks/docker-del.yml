@@ -1,0 +1,16 @@
+- name: pull images onto nodes
+  hosts: [nodes]
+  become: true
+  tasks:
+    - name: del image
+      when: openshift_node_group_name == 'node-config-compute'
+      name: get image name
+      shell: |
+        docker images |grep "centos"|awk '{print $3}'|sort -u
+      register: dockerout
+    - name: del image2
+      when: openshift_node_group_name == 'node-config-compute'
+      shell: |
+        docker rmi --force {{ item }}
+      with_items:
+        "{{ dockerout.stdout }}"

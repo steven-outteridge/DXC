@@ -1,0 +1,32 @@
+- name: Fiewall rules
+  hosts: [nodes]
+  become: true
+  tasks:
+    - name: Tag and push to local registry
+      when: openshift_node_group_name == 'node-config-compute'
+#      shell: |
+#        docker login -u demo-push-sa -p eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vLXB1c2giLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZGVtby1wdXNoLXNhLXRva2VuLWo4Ymd6Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlbW8tcHVzaC1zYSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjFjYzExYzk4LTJhZDctMTFlOS1iZTk4LTAyMWJlNmEzNjgxNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZW1vLXB1c2g6ZGVtby1wdXNoLXNhIn0.SgAfOrR6lv2qeWbukXmwTHum9Y1j5ZGPethYo5Kq7M5evcBECPdHhIgrk407D1j3_Umnx5bJM6gDhE1d70zgJj8R8TmTRB1ugBBD_KMvf1kAPvw3R2ncSwGNpqCQDjJK6n_xYko8QGY8nEATw70kh6NadeN_90FUItMliM_mJUruE5Fy4bzmRwzPhfdxew0d7nEIC2YWI7Ht9r4DT1MrVEBwQycCBY6qI9W_NvfGiXPLvw8BiUocd7nqFNGwhp7XsPjbrzQ8MxvIHUiTjWe2RiGkEqH7xRXNcQ8k_ouPuK1dvLMBTrgnZezSHdFDJAtYeReiKEGpoMIXxsTi-iipEQ docker-registry.default.svc:5000
+    #    docker pull docker-registry.default.svc:5000/demo-push/busybox:01
+      docker_image:
+        name: busybox
+        repository: docker-registry.default.svc:5000/demo-push
+        tag: 01
+        pull: yes
+
+
+#docker-registry.default.svc:5000/demo-push/busybox
+
+#    - name: copy tar
+#      when: openshift_node_group_name='node-config-compute'
+#      copy:
+#        src: /tmp/enhanced_ros.tar
+#        dest: /tmp/enhanced_ros.tar
+#        owner: foo
+#        group: foo
+#        mode: 0644
+#
+#    - name: import docker image
+#      docker_image:
+#        name: docker-registry-default.simapps.advantagedp.org/ad-sim/enhanced_ros
+#        load_path: /tmp/enhanced_ros.tar
+#        state: present
