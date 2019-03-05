@@ -37,7 +37,13 @@ openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kube
 ###########################################################################
 
 #oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
-oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
+#oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
+oreg_url=registry.redhat.io/openshift3/ose-${component}:${version}
+oreg_auth_user='11009103|soutteridge'
+oreg_auth_password="eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiJhZTg0NzU4ZjdlNzk0NjNhYmVkOTMxYzFlNmM2YzRhNCJ9.DeT7QO5xTv9XGt3e7ZWxGkSyFYi61lEZ7qqVzTjaVCAx6WRAFmIr6ohCOW-yNQa-Ug1OwmCl7k0jpioNGdnFsxR445osHTK8zZOZLF6NLyrzDKMXYE5gUGQD2ZG6q9SulGHawZB8PI9rJe4mq4QX7K5jgpP9hO6oUTU0JiCGICWbBnIyp6lFns5laZEr2MPcoj3dBsflC0rP84wWMSLQCMM-qf0alJv4pOgAP6qlxdwv3V6SJj-VFBrG2p3POQDMyHfpL4E1iqesCtf57ItOTWhlvmw6BBQu-cJ2-ZZywpulPSoZZv9nsHXvQuG43msZwoUkY2l9SEbQzm2atFRexumXpoOLWYRSOdL2xsKoxuKuiQ0P2D6lBFSavR1CD5onwi_RFTTuB115xQ3vtMffFYKBzo-BY3tRup_6qk-j4kcODOqeN34CjkVKQbkXYuXuTYt1bmgTzafhH5ph-YDucGfdr28V4TI29S5HfQ-pmR6JDkibmxJK9sElYtsaAiY1j_L2SbrEHkTyYspvE0zU4r75TkSorhdcbjPkOdT1pJrS4e3hjOc_JS-KKJWnhcGVAa6-_HPWT7MULs2Z_FvoPQRWu919H0E7AMOHZ8FaVLUQ-_4wzWXwsyplChHvcf0BNNB4BITaU5Pc7pxdagmUFz40V3O7x-Wza5V9NjdrAeg"
+
+
+openshift_examples_modify_imagestreams=true
 
 ###########################################################################
 ### OpenShift Master Vars
@@ -47,9 +53,9 @@ openshift_master_api_port=443
 openshift_master_console_port=443
 
 #Default:  openshift_master_cluster_method=native
-openshift_master_cluster_hostname=loadbalancer.b640.internal
-openshift_master_cluster_public_hostname=loadbalancer.b640.example.opentlc.com
-openshift_master_default_subdomain=apps.b640.example.opentlc.com
+openshift_master_cluster_hostname=loadbalancer.e301.internal
+openshift_master_cluster_public_hostname=loadbalancer.e301.example.opentlc.com
+openshift_master_default_subdomain=apps.e301.example.opentlc.com
 openshift_master_overwrite_named_certificates=True
 
 
@@ -88,7 +94,7 @@ openshift_hosted_registry_storage_volume_size= 20Gi
 
 #Loggin and Metrics
 
-openshift_logging_install_logging=true
+openshift_logging_install_logging=false
 openshift_logging_storage_kind=nfs
 openshift_logging_storage_access_modes= ['ReadWriteOnce']
 openshift_logging_storage_nfs_directory= /srv/nfs
@@ -97,7 +103,7 @@ openshift_logging_storage_volume_name= logging
 openshift_logging_storage_volume_size= 10Gi
 openshift_logging_storage_labels= {'storage': 'logging'}
 openshift_logging_es_cluster_size= 1
-openshift_logging_master_public_url= kibana.b640.example.opentlc.com
+openshift_logging_master_public_url= kibana.e301.example.opentlc.com
 openshift_logging_es_nodeselector= {"node-role.kubernetes.io/infra":"true"}
 openshift_logging_kibana_nodeselector= {"node-role.kubernetes.io/infra":"true"}
 openshift_logging_use_ops= false
@@ -116,14 +122,14 @@ openshift_metrics_cassandra_nodeselector= {"node-role.kubernetes.io/infra":"true
 openshift_metrics_hawkular_nodeselector= {"node-role.kubernetes.io/infra":"true"}
 openshift_metrics_heapster_nodeselector= {"node-role.kubernetes.io/infra":"true"}
 #
-openshift_metrics_cassandra_limits_memory= 8Gi
-openshift_metrics_cassandra_limits_cpu= 4000m
-openshift_metrics_cassandra_requests_memory= 4Gi
-openshift_metrics_cassandra_requests_cpu= 2000m
-openshift_metrics_hawkular_limits_memory= 4Gi
-openshift_metrics_hawkular_limits_cpu= 2000m
-openshift_metrics_hawkular_requests_memory= 2Gi
-openshift_metrics_hawkular_requests_cpu= 1000m
+#openshift_metrics_cassandra_limits_memory= 8Gi
+#openshift_metrics_cassandra_limits_cpu= 4000m
+#openshift_metrics_cassandra_requests_memory= 4Gi
+#openshift_metrics_cassandra_requests_cpu= 2000m
+#openshift_metrics_hawkular_limits_memory= 4Gi
+#openshift_metrics_hawkular_limits_cpu= 2000m
+#openshift_metrics_hawkular_requests_memory= 2Gi
+#openshift_metrics_hawkular_requests_cpu= 1000m
 
 
 ###########################################################################
@@ -140,33 +146,33 @@ nodes
 nfs
 
 [lb]
-loadbalancer.b640.internal
+loadbalancer.e301.internal
 
 [masters]
-master1.b640.internal
-master2.b640.internal
-master3.b640.internal
+master1.e301.internal
+master2.e301.internal
+master3.e301.internal
 
 [etcd]
-master1.b640.internal
-master2.b640.internal
-master3.b640.internal
+master1.e301.internal
+master2.e301.internal
+master3.e301.internal
 
 [nodes]
 ## These are the masters
-master1.b640.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
-master2.b640.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
-master3.b640.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master1.e301.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master2.e301.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master3.e301.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
 
 ## These are infranodes
-infranode1.b640.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
-infranode2.b640.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+infranode1.e301.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+infranode2.e301.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
 
 ## These are regular nodes
-node1.b640.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node2.b640.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node3.b640.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node1.e301.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node2.e301.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node3.e301.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
 
 
 [nfs]
-support1.b640.internal
+support1.e301.internal
